@@ -1,0 +1,45 @@
+﻿
+<!--ServerComponent is a nonroutable Razor component that cannot be accesed through a URL and is instead overlayed on an existing routable component or another nonroutable component-->
+
+
+@if (server != null)
+{
+
+    //The Enchance property provides interactivity to the page; 
+    //Whenever sumbit event is triggered instead of refreshing the page, only the specific component is refreshed
+
+    <!--   <EditForm Enhance="true" Model="server" FormName="serverComponentForm" OnSubmit="ChangeServerStatus"> -->
+
+    @*    <InputNumber @bind-Value="server.ServerID" hidden></InputNumber>                <!--Collects information from all fields and binds them to the server object-->
+        <InputText @bind-Value="server.Name" hidden></InputText>
+        <InputText @bind-Value="server.City" hidden></InputText>
+    <InputCheckbox @bind-Value="server.IsOnline" hidden></InputCheckbox>  *@
+    
+
+        <div ddata-name="@server.Name"
+        data-status="Server is @(server.IsOnline?"offline":"offline")"
+             style="@($"color:{(server.IsOnline?"green":"red")}")">                             <!--Change the style and status of the data based on its online status-->
+            @server.Name in @server.City is @(server.IsOnline ? "online" : "offline")
+            &nbsp;
+            <button type="button" class="btn btn-primary" @onclick="ChangeStatus">On/Off</button>                       <!--A submit type button is necessery to ensure the On submit event triggers-->
+            </div>
+    <!-- </EditForm> -->
+}
+
+
+@code {
+    
+    private Server? server { get; set; } = new Server { Name = "Server1", City = "Toronto" };
+
+ 
+    private void ChangeStatus()
+    {
+
+        if (server != null)
+        {
+            this.server.IsOnline = !this.server.IsOnline;
+        }
+        
+    }
+
+}

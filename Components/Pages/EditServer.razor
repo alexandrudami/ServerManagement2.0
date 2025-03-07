@@ -1,0 +1,109 @@
+﻿@page "/servers/{id:int}"            //specifies that the page is routable and the id parameter is constrained to an integer
+                                    <!--any URL that contains an existing id will acces the edit page for that specific list item-->
+<h3>EditServer</h3>
+
+@inject NavigationManager NavigationManager
+
+<!--Tipically when you use a class you need to instanciate it with the new keyword
+    Instead we can use the dependency injection so that the component doesnt need to know the definition of the class or manage its lifespan
+    The class is managed by a collection of ASP.Net Core services and is injected when needed in a component
+    The collection container instantiates an object and injects it and then handles the cleanup after its use-->
+
+
+@if(server != null)
+{
+
+    <!--EditForm is a built in Blazor component that is a bit more advanced than the regular html form component -->
+
+
+    <EditForm Model="server" FormName="formServer" OnValidSubmit="Submit">              <!-- Model attribute specifies what type of data it recieves in this case the server object-->
+                                                                                        <!-- Give the Form a Name; OnValidSubmit runs a function on a valid submit-->
+
+
+        <DataAnnotationsValidator></DataAnnotationsValidator>                           <!-- Tells the form to try and validate the inputs based on the model data type -->
+        <ValidationSummary></ValidationSummary>                                         <!-- Will display the reason for an invalid input range on top of the form-->
+        <InputNumber @bind-Value="server.ServerID" hidden></InputNumber>                <!-- Input Number(built in component for EditForm) bind-Value gets or sets the value recieved; ID will remain hidden -->
+       
+        
+        
+        <!-- Uses a bootstrap form control to display the data it requires next to the input box ordered in columns and rows-->
+
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">Name</label>                             
+            </div>
+            <div class="col-6">
+                <InputText @bind-Value="server.Name" class="form-control"></InputText>  <!-- Input Text (build in component for EditForm) binds a text value and gives it an control style of input  -->
+            </div>
+            <div class="col">
+                <ValidationMessage For="() => server.Name"></ValidationMessage>     <!--Displayes the reason for invalid input next to the invalid range-->
+            </div>
+        </div>
+
+        <br />
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">City</label>
+            </div>
+            <div class="col-6">
+                <InputText @bind-Value="server.City" class="form-control"></InputText> <!-- Input Text (build in component for EditForm) binds a text value and gives it an control style of input  -->
+            </div>
+            <div class="col">
+                <ValidationMessage For="() => server.City"></ValidationMessage>
+            </div>
+        </div>
+
+        <br />
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">Online</label>
+            </div>
+            <div class="col-6">
+                <InputCheckbox @bind-Value="server.IsOnline" class="form-check-input"></InputCheckbox> <!-- Input Checkbox (build in component for EditForm) binds boolean value and gives it a check input style input  -->
+            </div>
+        </div>
+
+        <br />
+
+        <button class="btn btn-primary"type="submit">Update</button>    <!-- button that begins the submit event-->
+        &nbsp;
+        <a href="/servers" class="btn btn-primary">Close</a>        <!-- Close button that routes back to the /servers page-->
+        &nbsp;
+
+
+    </EditForm>
+}
+<br />
+
+
+
+@code {
+
+    [Parameter]                     //denotes that the id variable is a route parameter
+    public int id { get; set; }
+
+    [SupplyParameterFromForm]               // When the form is submitted back to the servers, Blazor can find the component by the coresponding URL then binds the data in the form to the server property
+                                            // if there are multimple forms you can specify the form  name in [SupplyParameterFromForm(FormName = "form name")]
+    private Server? server { get; set; }
+
+
+    protected override void OnParametersSet()                       // This method is called when the component is initialized (the parameter is set or the page loads)
+    {
+        server ??= ServersRepository.GetServerById(this.id);      // It return the Server object with the specified id; ??= only assigns the value if the server is null
+    }
+
+
+    private void Submit()           //the function that handles the form submission event
+                                    // here we map the form field values to variables or parameters
+    {
+        if (server != null)
+        {
+            ServersRepository.UpdateServer(server.ServerID, server);    //updates the server object with the new values
+        }
+        NavigationManager.NavigateTo("/servers");    //navigates back to the /servers page
+    }
+
+
+}
+
+

@@ -1,0 +1,76 @@
+﻿@page "/servers"       // This is a routable component; They are placed inside the root component using the URL /servers
+
+@inject NavigationManager navigationManager  // Inject the NavigationManager service; 
+<h3>
+    Servers 
+
+</h3>
+
+
+    
+<div class="container-fluid text-center">
+    <div class="row w-50">
+        @foreach (var city in cities)   //Implict expressions are used by adding the @ symbol before the expression
+                                        //This can be used anywhere in an html element including attributes but it will and after space
+                                        //Explicit expressions are used by adding the @() syntax; everything inside the parantheses will be treated as C# code
+        { 
+            <div class="col">
+                <div class="card">
+                    <img src="@($"/images/{city}.png")" class="card-img-top" alt="...">         <!-- Uses static resources that must be placed in the wwwroot folder-->
+                                                                                                <!-- String interpolation is used with the $"{}" syntax; everything written inside the {} is not string-->
+                    <div class="card-body">
+                        <button type="button" class="btn btn-primary">@city</button>            <!-- the button is placed in a bootstrap card type display -->
+
+                    </div>
+                </div>
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
+<p>
+    <ServerComponent></ServerComponent>             <!--This adds the nonroutable component over the /servers page-->
+</p>
+
+<ul>
+    @foreach (var server in servers)                                                
+    {
+        <li>
+
+            @server.Name in @server.City is                                         
+            <span style= "color:@(server.IsOnline ? "green":"red")">            <!-- changes the style of the span based on the status of the server -->
+                @(server.IsOnline ? "online" : "offline")                       <!-- changes the text of the span based on the status of the server -->
+            </span>
+            &nbsp;
+            <a href="/servers/@server.ServerID" class=" btn btn-link">Edit</a>  <!-- anchor component that links to the edit page routable component; uses the bootstrap format for a link btn-->
+            &nbsp;
+            <EditForm 
+            Model="server" 
+            FormName="@($"form-server-{server.ServerID}")"
+            OnValidSubmit="@(() => {DeleteServer(server.ServerID); })">
+                <button type="submit" class="btn btn-primary">Delete</button>
+            </EditForm>
+        </li>
+    }
+</ul>
+
+<p>
+    <a href="/servers/add" class="btn btn-primary">Add Server</a>
+</p>
+
+@code {
+    private List<Server> servers = ServersRepository.GetServersByCity("Toronto");       // search through the servers list and get the servers in Toronto
+
+    private List<string> cities = CitiesRepository.GetCities();                         //return all cities
+
+    private void DeleteServer(int serverID)
+    {
+        ServersRepository.DeleteServer(serverID);
+        navigationManager.NavigateTo("/servers");
+    }
+
+}
