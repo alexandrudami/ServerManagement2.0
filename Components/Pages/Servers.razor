@@ -1,5 +1,7 @@
 ﻿@page "/servers"       // This is a routable component; They are placed inside the root component using the URL /servers
-
+@rendermode InteractiveServer               // interactivity location cahnges what parts of the webapp are interactive; this can be set in a specific component or on the root level in the App.razor file making the entire app interactive
+@* It is best to set the interactivity wherever the component is used instead of inside the component definition to not lock its interactivity*@
+@*if you use global interactivity you can use @attribute [ExcludeFromInteractiveRouting] to make a certain component use static serverside rendering *@
 @inject NavigationManager navigationManager  // Inject the NavigationManager service; 
 <h3>
     Servers 
@@ -7,19 +9,19 @@
 </h3>
 
 
-    
+
 <div class="container-fluid text-center">
     <div class="row w-50">
         @foreach (var city in cities)   //Implict expressions are used by adding the @ symbol before the expression
-                                        //This can be used anywhere in an html element including attributes but it will and after space
-                                        //Explicit expressions are used by adding the @() syntax; everything inside the parantheses will be treated as C# code
-        { 
+        //This can be used anywhere in an html element including attributes but it will and after space
+        //Explicit expressions are used by adding the @() syntax; everything inside the parantheses will be treated as C# code
+        {
             <div class="col">
-                <div class="card">
+                <div class="card@(selectedCity.Equals(city,StringComparison.OrdinalIgnoreCase)? "border-primary":"")" >
                     <img src="@($"/images/{city}.png")" class="card-img-top" alt="...">         <!-- Uses static resources that must be placed in the wwwroot folder-->
-                                                                                                <!-- String interpolation is used with the $"{}" syntax; everything written inside the {} is not string-->
+                    <!-- String interpolation is used with the $"{}" syntax; everything written inside the {} is not string-->
                     <div class="card-body">
-                        <button type="button" class="btn btn-primary">@city</button>            <!-- the button is placed in a bootstrap card type display -->
+                        <button type="button" class="btn btn-primary"  @onclick="@( () => { SelectCity(city); })">@city</button>            <!-- the button is placed in a bootstrap card type display -->
 
                     </div>
                 </div>
@@ -32,8 +34,11 @@
 
 </div>
 
+<br />
+<br />
+
 <p>
-    <ServerComponent></ServerComponent>             <!--This adds the nonroutable component over the /servers page-->
+          <!--This adds the nonroutable component over the /servers page-->
 </p>
 
 <ul>
@@ -67,10 +72,16 @@
 
     private List<string> cities = CitiesRepository.GetCities();                         //return all cities
 
+    private string selectedCity = "Toronto";                                                
+
     private void DeleteServer(int serverID)
     {
         ServersRepository.DeleteServer(serverID);
-        navigationManager.NavigateTo("/servers");
-    }
 
+    }
+    private void SelectCity(string cityName)
+    {
+        this.selectedCity = cityName;
+        this.servers = ServersRepository.GetServersByCity(this.selectedCity);
+    }
 }

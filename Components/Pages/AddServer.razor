@@ -1,5 +1,5 @@
 ﻿@page "/servers/add"
-
+@rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 <h3>AddServer</h3>
 <br />
@@ -58,12 +58,16 @@
     [SupplyParameterFromForm]
     private Server server { get; set; } = new Server() { IsOnline = false };
 
-    private void Submit()
+
+    
+    private async Task Submit()
     {
         if(server!= null)
         {
             ServersRepository.AddServer(server);
-            NavigationManager.NavigateTo("/servers");
+    
+            NavigationManager.NavigateTo("/servers");    //navigates back to the /servers page
+            await Task.CompletedTask;
         }
     }
 }

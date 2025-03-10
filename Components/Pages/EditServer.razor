@@ -1,7 +1,7 @@
 ﻿@page "/servers/{id:int}"            //specifies that the page is routable and the id parameter is constrained to an integer
                                     <!--any URL that contains an existing id will acces the edit page for that specific list item-->
 <h3>EditServer</h3>
-
+@rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 
 <!--Tipically when you use a class you need to instanciate it with the new keyword
@@ -93,14 +93,19 @@
     }
 
 
-    private void Submit()           //the function that handles the form submission event
+    private async Task Submit()           //the function that handles the form submission event
                                     // here we map the form field values to variables or parameters
     {
         if (server != null)
         {
             ServersRepository.UpdateServer(server.ServerID, server);    //updates the server object with the new values
         }
+        
+    
+       
         NavigationManager.NavigateTo("/servers");    //navigates back to the /servers page
+        await Task.CompletedTask;
+
     }
 
 
