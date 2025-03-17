@@ -35,10 +35,16 @@
 </div>
 
 <br />
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Search Servers" @bind-value="serverFilter"/>
+    <button class="btn btn-outline-secondary" type="button" id="button-search" @onclick="HandleSearch">Search</button>
+</div>
+
+
 <br />
 
 <p>
-          <!--This adds the nonroutable component over the /servers page-->
+    <!--This adds the nonroutable component over the /servers page-->
 </p>
 
 <ul>
@@ -72,7 +78,9 @@
 
     private List<string> cities = CitiesRepository.GetCities();                         //return all cities
 
-    private string selectedCity = "Toronto";                                                
+    private string selectedCity = "Toronto";
+
+    private string serverFilter="";
 
     private void DeleteServer(int serverID)
     {
@@ -84,4 +92,13 @@
         this.selectedCity = cityName;
         this.servers = ServersRepository.GetServersByCity(this.selectedCity);
     }
+
+
+
+    private void HandleSearch()
+    {
+        this.servers = ServersRepository.SearchServers(serverFilter);
+        this.selectedCity = string.Empty;
+    }
+
 }
