@@ -9,96 +9,46 @@
 </h3>
 
 
-
-<div class="container-fluid text-center">
-    <div class="row w-50">
-        @foreach (var city in cities)   //Implict expressions are used by adding the @ symbol before the expression
-        //This can be used anywhere in an html element including attributes but it will and after space
-        //Explicit expressions are used by adding the @() syntax; everything inside the parantheses will be treated as C# code
-        {
-            <div class="col">
-                <div class="card@(selectedCity.Equals(city,StringComparison.OrdinalIgnoreCase)? "border-primary":"")" >
-                    <img src="@($"/images/{city}.png")" class="card-img-top" alt="...">         <!-- Uses static resources that must be placed in the wwwroot folder-->
-                    <!-- String interpolation is used with the $"{}" syntax; everything written inside the {} is not string-->
-                    <div class="card-body">
-                        <button type="button" class="btn btn-primary"  @onclick="@( () => { SelectCity(city); })">@city</button>            <!-- the button is placed in a bootstrap card type display -->
-
-                    </div>
-                </div>
-
-            </div>
-
-        }
-
-    </div>
-
-</div>
-
-<br />
-<div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="Search Servers" @bind-value="serverFilter"/>
-    <button class="btn btn-outline-secondary" type="button" id="button-search" @onclick="HandleSearch">Search</button>
-</div>
+<CityListComponent
+SelectCityCallback="HandleCitySelection"></CityListComponent>
 
 
 <br />
 
-<p>
-    <!--This adds the nonroutable component over the /servers page-->
-</p>
 
-<ul>
-    @foreach (var server in servers)                                                
-    {
-        <li>
+<SearchBarComponent searchCallback="HandleSearchServer"></SearchBarComponent>
 
-            @server.Name in @server.City is                                         
-            <span style= "color:@(server.IsOnline ? "green":"red")">            <!-- changes the style of the span based on the status of the server -->
-                @(server.IsOnline ? "online" : "offline")                       <!-- changes the text of the span based on the status of the server -->
-            </span>
-            &nbsp;
-            <a href="/servers/@server.ServerID" class=" btn btn-link">Edit</a>  <!-- anchor component that links to the edit page routable component; uses the bootstrap format for a link btn-->
-            &nbsp;
-            <EditForm 
-            Model="server" 
-            FormName="@($"form-server-{server.ServerID}")"
-            OnValidSubmit="@(() => {DeleteServer(server.ServerID); })">
-                <button type="submit" class="btn btn-primary">Delete</button>
-            </EditForm>
-        </li>
-    }
-</ul>
+
+<ServerListComponent 
+@rendermode = "InteractiveServer" 
+CityName="@this.selectedCity"
+SearchFilter="@this.searchFilter"></ServerListComponent>
+<br />
 
 <p>
     <a href="/servers/add" class="btn btn-primary">Add Server</a>
 </p>
 
 @code {
-    private List<Server> servers = ServersRepository.GetServersByCity("Toronto");       // search through the servers list and get the servers in Toronto
-
-    private List<string> cities = CitiesRepository.GetCities();                         //return all cities
 
     private string selectedCity = "Toronto";
-
-    private string serverFilter="";
-
-    private void DeleteServer(int serverID)
-    {
-        ServersRepository.DeleteServer(serverID);
-
-    }
-    private void SelectCity(string cityName)
-    {
-        this.selectedCity = cityName;
-        this.servers = ServersRepository.GetServersByCity(this.selectedCity);
-    }
-
-
-
+    private string searchFilter = "";
     private void HandleSearch()
     {
-        this.servers = ServersRepository.SearchServers(serverFilter);
-        this.selectedCity = string.Empty;
+        //  this.servers = ServersRepository.SearchServers(serverFilter);
+        //  this.selectedCity = string.Empty;
+    }
+
+
+    private void HandleCitySelection(string cityName)
+    {
+        selectedCity = cityName;
+        this.searchFilter = "";
+    }
+    private void HandleSearchServer(string searchFilter)
+    {
+        this.searchFilter = searchFilter;
+     
     }
 
 }
