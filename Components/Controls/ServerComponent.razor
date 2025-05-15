@@ -13,18 +13,64 @@
             @(server.IsOnline ? "online" : "offline")                       <!-- changes the text of the span based on the status of the server -->
         </span>
         &nbsp;
-        <a href="/servers/@server.ServerID" class=" btn btn-link">Edit</a>  <!-- anchor component that links to the edit page routable component; uses the bootstrap format for a link btn-->
+
+        @if (server.IsOnline)
+        {
+            <button type="button"
+            class="btn btn-outline-danger"
+            @onclick=  "@(()=> {server.IsOnline = false;})">
+                Turn Off
+            </button>
+
+        }
+        else
+        {
+            <button type="button"
+            class="btn btn-outline-success"
+            @onclick="@(()=> {server.IsOnline = true;})">
+                Turn On
+            </button>
+        }
+
+
+        &nbsp;
+
+
+
+        @if(server.IsOnline)
+        {
+            Random random = new Random();
+            int randomNumber = random.Next(0, 500);
+            <text>@randomNumber</text> 
+        }
+        else
+        {
+            <text>N/A</text>
+        }
+
+
+
+        &nbsp;
+        <button type="button" class=" btn btn-link" @onclick= "@(()=> {this.editingServer = !this.editingServer;})">Edit</button>  <!-- anchor component that links to the edit page routable component; uses the bootstrap format for a link btn-->
         &nbsp;
         <EditForm Model="server"
-                  FormName="@($"form-server-{server.ServerID}")"
-                  OnValidSubmit="@(() => {DeleteServer(server.ServerID); })">
+        FormName="@($"form-server-{server.ServerID}")"
+        OnValidSubmit="@(() => {DeleteServer(server.ServerID); })">
             <button type="submit" class="btn btn-primary">Delete</button>
         </EditForm>
+
+        @if(editingServer)
+        {
+            <ServerManagement2._0.Components.Pages.EditServer id="this.server.ServerID"></ServerManagement2._0.Components.Pages.EditServer>
+        }
+
     </li>
 }
 
 
 @code {
+    private bool editingServer = false;
+
     [Parameter]
     public Server? server { get; set; } = new Server { Name = "Server1", City = "Toronto" };
 
