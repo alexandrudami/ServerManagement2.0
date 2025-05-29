@@ -5,15 +5,34 @@
 @if (server != null)
 {
 
-    <li>
-
-        @server.Name in @server.City is
-        <span style="color:@(server.IsOnline ? "green":"red")">
+    <tr style="background-color: @GetBackgroundColor()">
+        <td>
+            @server.Name
+        </td>
+         <td>
+            @server.City 
+         </td>
+        <td style="color:@(server.IsOnline ? "green":"red")">
             <!-- changes the style of the span based on the status of the server -->
             @(server.IsOnline ? "online" : "offline")                       <!-- changes the text of the span based on the status of the server -->
-        </span>
-        &nbsp;
+        </td>
+       
 
+        <td>
+            @if (server.IsOnline)
+            {
+                Random random = new Random();
+                int randomNumber = random.Next(0, 500);
+                <text>@randomNumber</text>
+            }
+            else
+            {
+                <text>N/A</text>
+            }
+        </td>
+
+
+        <td>
         @if (server.IsOnline)
         {
             <button type="button"
@@ -31,40 +50,31 @@
                 Turn On
             </button>
         }
+            <a href="/servers/@server.ServerID" class="btn btn-link">Edit</a>
+        </td>
 
+   
 
-        &nbsp;
-
-
-
-        @if(server.IsOnline)
-        {
-            Random random = new Random();
-            int randomNumber = random.Next(0, 500);
-            <text>@randomNumber</text> 
-        }
-        else
-        {
-            <text>N/A</text>
-        }
+      
 
 
 
-        &nbsp;
-        <button type="button" class=" btn btn-link" @onclick= "@(()=> {this.editingServer = !this.editingServer;})">Edit</button>  <!-- anchor component that links to the edit page routable component; uses the bootstrap format for a link btn-->
-        &nbsp;
-        <EditForm Model="server"
-        FormName="@($"form-server-{server.ServerID}")"
-        OnValidSubmit="@(() => {DeleteServer(server.ServerID); })">
-            <button type="submit" class="btn btn-primary">Delete</button>
-        </EditForm>
+     <td>
+            <EditForm Model="server"
+                      FormName="@($"form-server-{server.ServerID}")"
+                      OnValidSubmit="@(() => {DeleteServer(server.ServerID); })">
+                <button type="submit" class="btn btn-primary">Delete</button>
+            </EditForm>
+     </td>
+       
 
-        @if(editingServer)
+        @*        @if(editingServer)
         {
             <ServerManagement2._0.Components.Pages.EditServer id="this.server.ServerID"></ServerManagement2._0.Components.Pages.EditServer>
-        }
+        } *@
 
-    </li>
+    </tr>
+
 }
 
 
@@ -74,7 +84,9 @@
     [Parameter]
     public Server? server { get; set; } = new Server { Name = "Server1", City = "Toronto" };
 
- 
+
+    [CascadingParameter(Name = "SelectedCity")]   
+    public string? SelectedCity { get; set; } 
 
     private void DeleteServer(int serverID)
     {
@@ -86,5 +98,24 @@
 
 
     }
+
+    private string GetBackgroundColor()
+    {
+        if (SelectedCity != null)
+        {
+            switch(this.SelectedCity)
+            {
+                   case "Toronto": return "powderblue";
+                   case"Montreal": return "lightgrey";
+                   case "Ottawa": return "palegreen";
+                   case "Calgary": return "pink";
+                   case "Halifax": return "white";
+                default: return "white";  
+            }
+        }
+        else
+            return "white";
+    }
+
 
 }

@@ -28,40 +28,43 @@
         
         <!-- Uses a bootstrap form control to display the data it requires next to the input box ordered in columns and rows-->
 
-        <div class="row mb-3">
+       @*  <div class="row mb-3">
             <div class="col-2">
                 <label class="col-form-label">Name</label>                             
             </div>
-            <div class="col-6">
+            <div class="col-6 input-width">
                 <InputText @bind-Value="server.Name" class="form-control"></InputText>  <!-- Input Text (build in component for EditForm) binds a text value and gives it an control style of input  -->
             </div>
             <div class="col">
                 <ValidationMessage For="() => server.Name"></ValidationMessage>     <!--Displayes the reason for invalid input next to the invalid range-->
             </div>
-        </div>
+        </div> *@
+        <FieldComponent Label="Name">
+            <Control>
+                <InputText @bind-Value="server.Name" class="form-control"></InputText>
+            </Control>
+            <ValidationControl>
+                <ValidationMessage For=" () => server.Name"></ValidationMessage>
+            </ValidationControl>
+        </FieldComponent>
+        <br />
+        <FieldComponent Label="City">
+            <Control>
+                <InputText @bind-Value="server.Name" class="form-control"></InputText>
+            </Control>
+            <ValidationControl>
+                <ValidationMessage For=" () => server.Name"></ValidationMessage>
+            </ValidationControl>
+        </FieldComponent>
 
         <br />
-        <div class="row mb-3">
-            <div class="col-2">
-                <label class="col-form-label">City</label>
-            </div>
-            <div class="col-6">
-                <InputText @bind-Value="server.City" class="form-control"></InputText> <!-- Input Text (build in component for EditForm) binds a text value and gives it an control style of input  -->
-            </div>
-            <div class="col">
-                <ValidationMessage For="() => server.City"></ValidationMessage>
-            </div>
-        </div>
-
-        <br />
-        <div class="row mb-3">
-            <div class="col-2">
-                <label class="col-form-label">Online</label>
-            </div>
-            <div class="col-6">
-                <InputCheckbox @bind-Value="server.IsOnline" class="form-check-input"></InputCheckbox> <!-- Input Checkbox (build in component for EditForm) binds boolean value and gives it a check input style input  -->
-            </div>
-        </div>
+          <FieldComponent Label="Name">
+            <Control>
+                <InputCheckbox @bind-Value="server.IsOnline" class="form-check-input"></InputCheckbox>
+            </Control>
+        
+        </FieldComponent>
+       
 
         <br />
 
