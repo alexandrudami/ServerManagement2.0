@@ -1,7 +1,7 @@
 ﻿
 <!--ServerComponent is a nonroutable Razor component that cannot be accesed through a URL and is instead overlayed on an existing routable component or another nonroutable component-->
 @inject NavigationManager navigationManager
-
+@inject IServerEFCoreRepository ServerEFCoreRepository
 @if (server != null)
 {
 
@@ -40,7 +40,7 @@
             @onclick=  "@(()=> {server.IsOnline = false;})">
                 Turn Off
             </button>
-
+                ServerEFCoreRepository.UpdateServer(this.server.ServerID, this.server);
         }
         else
         {
@@ -49,7 +49,9 @@
             @onclick="@(()=> {server.IsOnline = true;})">
                 Turn On
             </button>
+                ServerEFCoreRepository.UpdateServer(this.server.ServerID,this.server);
         }
+        
             <a href="/servers/@server.ServerID" class="btn btn-link">Edit</a>
         </td>
 
@@ -92,7 +94,7 @@
     {
         if (serverID > 0)
         {
-            ServersRepository.DeleteServer(serverID);
+            ServerEFCoreRepository.DeleteServer(serverID);
             navigationManager.NavigateTo("/servers", true);
         }
 

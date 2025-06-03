@@ -3,6 +3,7 @@
 <h3>EditServer</h3>
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
+@inject IServerEFCoreRepository ServerEfCoreRepository
 
 <!--Tipically when you use a class you need to instanciate it with the new keyword
     Instead we can use the dependency injection so that the component doesnt need to know the definition of the class or manage its lifespan
@@ -92,7 +93,7 @@
 
     protected override void OnParametersSet()                       // This method is called when the component is initialized (the parameter is set or the page loads)
     {
-        server ??= ServersRepository.GetServerById(this.id);      // It return the Server object with the specified id; ??= only assigns the value if the server is null
+        server ??= ServerEfCoreRepository.GetServerById(this.id);      // It return the Server object with the specified id; ??= only assigns the value if the server is null
     }
 
 
@@ -101,7 +102,7 @@
     {
         if (server != null)
         {
-            ServersRepository.UpdateServer(server.ServerID, server);    //updates the server object with the new values
+            ServerEfCoreRepository.UpdateServer(server.ServerID, server);    //updates the server object with the new values
         }
         
     

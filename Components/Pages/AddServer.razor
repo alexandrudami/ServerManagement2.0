@@ -1,6 +1,9 @@
 ﻿@page "/servers/add"
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
+
+@inject IServerEFCoreRepository ServerEfCoreRepository
+
 <h3>AddServer</h3>
 <br />
 
@@ -64,7 +67,7 @@
     {
         if(server!= null)
         {
-            ServersRepository.AddServer(server);
+            ServerEfCoreRepository.AddServer(server);
     
             NavigationManager.NavigateTo("/servers");    //navigates back to the /servers page
             await Task.CompletedTask;

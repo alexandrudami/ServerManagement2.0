@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.QuickGrid
 @page "/quickgrid"
 @inject NavigationManager navigationManager
-
+@inject IServerEFCoreRepository ServerEfCoreRepository
 <h3>QuikGridDemo</h3>
 @if(servers !=null)
 {
@@ -72,12 +72,21 @@
 
 
 @code {
-    private List<Server>? servers = ServersRepository.GetServers();
+    private List<Server>? servers;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+             servers = ServerEfCoreRepository.GetServers();
+        }
+    }
+
     private void DeleteServer(int serverID)
     {
         if (serverID > 0)
         {
-            ServersRepository.DeleteServer(serverID);
+            ServerEfCoreRepository.DeleteServer(serverID);
             navigationManager.NavigateTo("/servers", true);
         }
 

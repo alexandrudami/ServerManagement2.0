@@ -1,10 +1,25 @@
+using Microsoft.EntityFrameworkCore;
 using ServerManagement2._0.Components;
+using ServerManagement2._0.Data;
+using ServerManagement2._0.Components.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddDbContextFactory<ServerManagementContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SVManagement"));
+}
+);
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+
+
+builder.Services.AddTransient<IServerEFCoreRepository, ServerEFCoreRepository>();
+
 
 var app = builder.Build();
 
